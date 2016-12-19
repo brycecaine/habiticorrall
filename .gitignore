@@ -2,6 +2,8 @@
 *.sw[po]
 *.bak
 *.orig
+*.sqlite3
 *~
 .project
 .pydevproject
+private.py

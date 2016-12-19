@@ -1,0 +1,87 @@
+{% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+			<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+		{% endfor %}
+	</ul>
+{% endif %}
+
+<table>
+    <tr>
+        {% for user in user_list %}
+            <td>
+                <img src="https://habitica.com/export/avatar-{{ user.id }}.png">
+            </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        {% for user in user_list %}
+            <td>
+                {{ user.profile.name }}
+            </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        {% for user in user_list %}
+            <td>
+                Level: {{ user.stats.lvl }}
+            </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        {% for user in user_list %}
+            <td>
+                Health: {{ user.health }} / {{ user.stats.maxHealth }}
+            </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        {% for user in user_list %}
+            <td>
+                Experience: {{ user.stats.exp }} / {{ user.stats.toNextLevel }}
+            </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        {% for user in user_list %}
+            <td>
+                Gold: {{ user.gold }} Silver: {{ user.silver }}
+            </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        <td colspan="6" bgcolor="silver">
+            Dailies
+        </td>
+    </tr>
+    <tr>
+        {% for user in user_list %}
+            <td valign="top">
+                {% for daily in user.dailies %}
+                <div style="background-color: {{ daily.color }};">{% if daily.completed == True %}&check;{% else %}<a href="/dashboard/score/{{ user.id }}/{{ daily.id }}">&EmptySmallSquare;</a>{% endif %} ({{ daily.streak }}) {{ daily.text }}</div>
+                {% endfor %}
+            </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        <td colspan="6" bgcolor="silver">
+            Habits
+        </td>
+    </tr>
+    <tr>
+        {% for user in user_list %}
+            <td valign="top">
+                {% for habit in user.habits %}
+                    <div style="background-color: {{ habit.color }};"><a href="/dashboard/score/{{ user.id }}/{{ habit.id }}">&plus;</a> {{ habit.text }}</div>
+                {% endfor %}
+            </td>
+        {% endfor %}
+    </tr>
+</table>
+
+<br />
+<br />
+
+{% for chat_msg in chat_list %}
+	{{ chat_msg }}<br />
+{% endfor %}
