@@ -42,6 +42,9 @@ def categorize_tasks(task_data):
     dailies = []
     habits = []
     todos = []
+    dailies_sorted = []
+    habits_sorted = []
+    todos_sorted = []
 
     for task in task_data:
         for task_color in config.TASK_COLORS:
