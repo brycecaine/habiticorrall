@@ -1,14 +1,56 @@
 from . import config
 from . import private
+from .models import Person
 from datetime import datetime
+from pprint import pprint
 import json
 import math
 import requests
 
 
+def get_tasks(username):
+    dailies = []
+    habits = []
+    todos = []
+
+    if username:
+        user_tasks_url = 'https://habitica.com/api/v3/tasks/user'
+
+        person = Person.objects.get(username=username)
+        headers = {'x-api-user': person.user_id,
+                   'x-api-key': person.api_token}
+        user_tasks_rsp = json.loads(requests.get(user_tasks_url, headers=headers).text)
+        task_data = user_tasks_rsp['data']
+
+        dailies, habits, todos = categorize_tasks(task_data)
+
+        return (dailies, habits, todos)
+
+
+def get_items(username):
+    dailies = []
+    habits = []
+    todos = []
+
+    if username:
+        user_url = 'https://habitica.com/api/v3/user'
+
+        person = Person.objects.get(username=username)
+        headers = {'x-api-user': person.user_id,
+                   'x-api-key': person.api_token}
+        user_rsp = json.loads(requests.get(user_url, headers=headers).text)
+        user_data = user_rsp['data']
+
+        user_data['health'] = int(round(user_data['stats']['hp']))
+        gold, silver = get_formatted_gp(user_data['stats']['gp'])
+        user_data['gold'] = gold
+        user_data['silver'] = silver
+
+        return user_data
+
+
 def get_user_data():
     user_url = 'https://habitica.com/api/v3/user'
-    user_tasks_url = 'https://habitica.com/api/v3/tasks/user'
 
     users = private.USERS
     user_list = []
@@ -18,7 +60,6 @@ def get_user_data():
                    'x-api-key': user['api_token']}
 
         user_rsp = json.loads(requests.get(user_url, headers=headers).text)
-        user_tasks_rsp = json.loads(requests.get(user_tasks_url, headers=headers).text)
 
         user_data = user_rsp['data']
         user_data['health'] = int(round(user_data['stats']['hp']))
@@ -27,8 +68,7 @@ def get_user_data():
         user_data['silver'] = silver
 
 
-        task_data = user_tasks_rsp['data']
-        dailies, habits, todos = categorize_tasks(task_data)
+        dailies, habits, todos = get_tasks(user['username'])
         user_data['dailies'] = dailies
         user_data['habits'] = habits
         user_data['todos'] = todos
@@ -93,12 +133,13 @@ def get_chat_data():
 
     return chat_list
 
-def score_task(user_id, task_id):
-    api_token = get_api_token(user_id)
-    headers = {'x-api-user': user_id,
-               'x-api-key': api_token}
+def score_task(username, task_id, direction='up'):
+    person = Perons.objects.get(username=username)
+    headers = {'x-api-user': person.user_id,
+               'x-api-key': person.api_token}
 
-    score_url = 'https://habitica.com/api/v3/tasks/%s/score/up' % task_id
+    score_url = 'https://habitica.com/api/v3/tasks/%s/score/%s' % (
+        task_id, direction)
     task_rsp = json.loads(requests.post(score_url, headers=headers).text)
 
     discovery_msg = 'Although no items were found, you found greater confidence in doing a good deed.'
@@ -111,9 +152,13 @@ def score_task(user_id, task_id):
     return result_msg
 
 
-def get_api_token(user_id):
-    for user in private.USERS:
-        if user['user_id'] == user_id:
-            return user['api_token']
+def get_persons():
+    persons = Person.objects.all()
 
-    return None
+    return persons
+
+
+def get_person(username):
+    person = Person.objects.get(username=username)
+
+    return person

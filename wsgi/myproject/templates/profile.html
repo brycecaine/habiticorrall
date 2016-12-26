@@ -1,0 +1,107 @@
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://habitica.com/app-d420f07d.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<style>
+		.buffer-bottom {
+			margin-bottom: 20px;
+		}
+
+		.buffer-right {
+			margin-right: 10px;
+		}
+		.under {
+			position:relative;
+			left:0px;
+			top:0px;
+			z-index:2;
+		}
+		.over {
+			position:relative;
+			left:-108px;
+			top:0px;
+			z-index:1;
+		}
+	</style>
+</head>
+
+<h1>Habitica Profile</h1>
+
+{% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+			<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+		{% endfor %}
+	</ul>
+{% endif %}
+
+<ul class="nav nav-pills">
+	{% for person in persons %}
+		<li role="presentation" {% if person.username == username %}class="active"{% endif %}><a href="/dashboard/profile/{{ person.username }}">{{ person.first_name }}</a></li>
+	{% endfor %}
+</ul>
+
+<img src="https://habitica.com/export/avatar-{{ curr_person.user_id }}.png">
+<h2>{{ curr_person.first_name }}</h2>
+Level: {{ user_data.stats.lvl }}<br />
+Health: {{ user_data.health }} / {{ user_data.stats.maxHealth }}<br />
+Experience: {{ user_data.stats.exp }} / {{ user_data.stats.toNextLevel }}<br />
+Gold: {{ user_data.gold }} Silver: {{ user_data.silver }}<br />
+<br />
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Pets</h3>
+	</div>
+	<div class="panel-body">
+		{% for pet in user_data.items.pets %}
+			<img class="Pet-{{ pet }}">
+		{% endfor %}
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Food</h3>
+	</div>
+	<div class="panel-body">
+		{% for food in user_data.items.food %}
+			<img class="Pet_Food_{{ food }}">
+		{% endfor %}
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Eggs</h3>
+	</div>
+	<div class="panel-body">
+		{% for egg in user_data.items.eggs %}
+			<img class="Pet_Egg_{{ egg }}">
+		{% endfor %}
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Hatching Potions</h3>
+	</div>
+	<div class="panel-body">
+		{% for potion in user_data.items.hatchingPotions %}
+			<img class="Pet_HatchingPotion_{{ potion }}">
+		{% endfor %}
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Mounts</h3>
+	</div>
+	<div class="panel-body">
+		{% for mount in user_data.items.mounts %}
+			<img class="Mount_Head_{{ mount }} under">
+			<img class="Mount_Body_{{ mount }} over">
+		{% endfor %}
+	</div>
+</div>
+
