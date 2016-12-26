@@ -1,5 +1,4 @@
 from . import config
-from . import private
 from .models import Person
 from datetime import datetime
 from pprint import pprint
@@ -52,12 +51,12 @@ def get_items(username):
 def get_user_data():
     user_url = 'https://habitica.com/api/v3/user'
 
-    users = private.USERS
+    persons = Person.objects.all()
     user_list = []
 
-    for user in users:
-        headers = {'x-api-user': user['user_id'],
-                   'x-api-key': user['api_token']}
+    for person in persons:
+        headers = {'x-api-user': person.user_id,
+                   'x-api-key': person.api_token}
 
         user_rsp = json.loads(requests.get(user_url, headers=headers).text)
 
@@ -68,7 +67,7 @@ def get_user_data():
         user_data['silver'] = silver
 
 
-        dailies, habits, todos = get_tasks(user['username'])
+        dailies, habits, todos = get_tasks(person.username)
         user_data['dailies'] = dailies
         user_data['habits'] = habits
         user_data['todos'] = todos
@@ -119,10 +118,10 @@ def get_formatted_gp(gp):
 
 
 def get_chat_data():
-    users = private.USERS
+    persons = Person.objects.all()
 
-    headers = {'x-api-user': users[0]['user_id'],
-				'x-api-key': users[0]['api_token']}
+    headers = {'x-api-user': persons[0].user_id,
+				'x-api-key': persons[0].api_token}
 
     chat_url = 'https://habitica.com/api/v3/groups/party/chat'
 
