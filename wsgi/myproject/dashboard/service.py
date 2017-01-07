@@ -133,7 +133,7 @@ def get_chat_data():
     return chat_list
 
 def score_task(username, task_id, direction='up'):
-    person = Persons.objects.get(username=username)
+    person = Person.objects.get(username=username)
     headers = {'x-api-user': person.user_id,
                'x-api-key': person.api_token}
 
